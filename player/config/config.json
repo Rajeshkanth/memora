@@ -1,0 +1,16 @@
+{
+  "mediaFolder": "media",
+  "supportedVideoExtensions": [
+    ".mp4",
+    ".mov",
+    ".mkv",
+    ".avi"
+  ],
+  "supportedImageExtensions": [
+    ".jpg",
+    ".jpeg",
+    ".png"
+  ],
+  "loop": true,
+  "shuffle": false
+}
