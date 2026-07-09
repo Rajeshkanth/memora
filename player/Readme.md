@@ -5,9 +5,9 @@
 - [x] Folder structure
 - [x] Configuration
 - [x] Media discovery
-- [ ] Video playback
-- [ ] Fullscreen mode
-- [ ] Infinite loop
+- [x] Video playback
+- [x] Fullscreen mode
+- [x] Infinite loop
 - [ ] Raspberry Pi boot
 
 ## Sprint 2

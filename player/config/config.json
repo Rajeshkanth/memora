@@ -11,6 +11,8 @@
     ".jpeg",
     ".png"
   ],
-  "loop": true,
-  "shuffle": false
+  "loop": false,
+  "shuffle": false,
+  "idleScreen": true,
+  "idleMessage": "All memories played."
 }

@@ -1,10 +1,22 @@
 import time
 import vlc
 
+VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv"]
+IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 class Renderer:
 
     def play(self, media_path):
+
+        suffix = media_path.suffix.lower()
+
+        if suffix in [".mp4", ".mov", ".avi", ".mkv"]:
+            self.play_video(media_path)
+
+        elif suffix in [".jpg", ".jpeg", ".png"]:
+            self.show_image(media_path)
+
+    def play_video(self, media_path):
 
         instance = vlc.Instance()
 
@@ -22,3 +34,7 @@ class Renderer:
 
         while player.is_playing():
             time.sleep(0.5)
+
+    def show_image(self, media_path):
+
+        print("Image showing feature will be in future")
