@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 import vlc
 
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv"]
@@ -6,35 +7,59 @@ IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 
 class Renderer:
 
+    def __init__(self):
+
+        self.instance = vlc.Instance()
+
+        self.player = self.instance.media_player_new()
+
     def play(self, media_path):
 
         suffix = media_path.suffix.lower()
 
-        if suffix in [".mp4", ".mov", ".avi", ".mkv"]:
+        if suffix in VIDEO_EXTENSIONS:
             self.play_video(media_path)
 
-        elif suffix in [".jpg", ".jpeg", ".png"]:
+        elif suffix in IMAGE_EXTENSIONS:
             self.show_image(media_path)
 
     def play_video(self, media_path):
 
-        instance = vlc.Instance()
+        media = self.instance.media_new(str(media_path))
 
-        player = instance.media_player_new()
+        self.player.set_media(media)
 
-        media = instance.media_new(str(media_path))
+        self.player.set_fullscreen(True)
 
-        player.set_media(media)
-
-        player.set_fullscreen(True)
-
-        player.play()
+        self.player.play()
 
         time.sleep(1)
 
-        while player.is_playing():
+        while self.player.is_playing():
             time.sleep(0.5)
 
     def show_image(self, media_path):
 
-        print("Image showing feature will be in future")
+        media = self.instance.media_new(str(media_path))
+
+        self.player.set_media(media)
+
+        self.player.set_fullscreen(True)
+
+        self.player.play()
+
+        time.sleep(5)
+
+    def show_splash(self):
+
+        splash = Path("assets") / "splash.mp4"
+
+        media = self.instance.media_new(str(splash))
+
+        self.player.set_media(media)
+
+        self.player.set_fullscreen(True)
+
+        self.player.play()
+
+        time.sleep(2)

@@ -13,9 +13,11 @@ class MemoraPlayer:
 
     def start(self):
 
-        print("Scanning media...")
-
         media = self.scanner.scan()
+
+        self.renderer.show_splash()
+
+        print("Scanning media...")
 
         playlist = Playlist(media)
 
