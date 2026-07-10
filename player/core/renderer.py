@@ -9,11 +9,19 @@ class Renderer:
 
     def __init__(self):
 
-        self.instance = vlc.Instance()
+        self.instance = None
 
-        self.player = self.instance.media_player_new()
+        self.player = None
+    
+    def initialize(self):
+
+        if self.instance is None:
+            self.instance = vlc.Instance()
+            self.player = self.instance.media_player_new()
 
     def play(self, media_path):
+
+        self.initialize()
 
         suffix = media_path.suffix.lower()
 
@@ -51,6 +59,8 @@ class Renderer:
         time.sleep(5)
 
     def show_splash(self):
+
+        self.initialize()
 
         splash = Path("assets") / "splash.mp4"
 
