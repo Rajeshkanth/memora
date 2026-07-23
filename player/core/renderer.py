@@ -19,7 +19,7 @@ class Renderer:
             self.instance = vlc.Instance(
                 "--quiet",
                 "--no-video-title-show",
-                "--vout=drm"
+                "--vout=drm_vout"
             )
             self.player = self.instance.media_player_new()
 
