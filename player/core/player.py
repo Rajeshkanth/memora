@@ -3,6 +3,7 @@ from core.playlist import Playlist
 from core.renderer import Renderer
 from config import Config
 from constants import APP_NAME, VERSION
+import time
 
 class MemoraPlayer:
 
@@ -14,6 +15,10 @@ class MemoraPlayer:
     def start(self):
 
         media = self.scanner.scan()
+
+        self.renderer.initialize()
+
+        time.sleep(1)
 
         self.renderer.show_splash()
 
@@ -34,7 +39,13 @@ class MemoraPlayer:
         while True:
             current = playlist.current()
 
-            print(f"Playing {current.name}")
+            if (
+                playlist.size() == 1 and
+                current.suffix.lower() in [".jpg", ".jpeg", ".png"]
+            ):
+                print(f"Displaying {current.name}")
+                self.renderer.show_image_forever(current)
+                return
 
             self.renderer.play(current)
 
