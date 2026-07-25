@@ -9,19 +9,11 @@ engine.initialize()
 
 slideShow = SlideshowManager(engine, "media")
 
-slideShow.start()
+slideShow.start(interval=3)
 
-time.sleep(2)
-
-slideShow.next()
-
-time.sleep(2)
-
-slideShow.previous()
-
-time.sleep(2)
-
-engine.shutdown()
+while True:
+    slideShow.update()
+    time.sleep(0.5)
 
 # engine.show("media/photo1.jpg")
 

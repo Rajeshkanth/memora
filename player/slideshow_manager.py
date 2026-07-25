@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 
 
 class SlideshowManager:
@@ -16,6 +17,10 @@ class SlideshowManager:
             ".png",
             ".webp",
         }
+
+        self.interval = 5
+        self.running = False
+        self.last_switch = 0
 
     def load(self):
 
@@ -64,8 +69,32 @@ class SlideshowManager:
 
         self.show_current()
 
-    def start(self):
+    def start(self, interval=5):
+
+        self.interval = interval
 
         self.load()
 
         self.show_current()
+
+        self.last_switch = time.monotonic()
+
+        self.running = True
+
+    
+    def stop(self):
+
+        self.running = False
+
+    def update(self):
+
+        if not self.running:
+            return
+
+        now = time.monotonic()
+
+        if now - self.last_switch >= self.interval:
+
+            self.next()
+
+            self.last_switch = now
