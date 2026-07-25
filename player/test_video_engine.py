@@ -8,6 +8,11 @@ engine.initialize()
 
 print("Video engine initiated successfully")
 
-engine.play("media/test1.mp4")
+engine.play("media/test.mp4")
 
-time.sleep(10)
+time.sleep(0.5)
+
+while engine.is_playing():
+    time.sleep(0.1)
+
+print("Playback finished")

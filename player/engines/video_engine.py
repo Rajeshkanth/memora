@@ -39,7 +39,10 @@ class VideoEngine:
         pass
 
     def is_playing(self):
-        pass
+        if not self.initialized:
+            return False
+
+        return bool(self.player.is_playing())
 
     def shutdown(self):
         pass
