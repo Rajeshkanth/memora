@@ -21,10 +21,23 @@ class ImageEngine:
 
         self.window.show()
 
-        self.renderer = sdl2.ext.Renderer(self.window)
+        self.renderer = sdl2.SDL_CreateRenderer(
+            self.window.window,
+            -1,
+            sdl2.SDL_RENDERER_ACCELERATED
+        )
 
-        self.renderer.clear((0, 0, 0))
-        self.renderer.present()
+        # Set draw color to red
+        sdl2.SDL_SetRenderDrawColor(
+            self.renderer,
+            255, 0, 0, 255
+        )
+
+        # Clear the screen using that color
+        sdl2.SDL_RenderClear(self.renderer)
+
+        # Display it
+        sdl2.SDL_RenderPresent(self.renderer)
 
     def show(self, image_path):
         pass
