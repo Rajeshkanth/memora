@@ -8,7 +8,7 @@
 - [x] Video playback
 - [x] Fullscreen mode
 - [x] Infinite loop
-- [ ] Raspberry Pi boot
+- [x] Raspberry Pi boot
 
 ## Sprint 2
 - [ ] Photo slideshow
