@@ -1,15 +1,18 @@
 import sdl2
 import sdl2.ext
 from PIL import Image, ImageOps
+from collections import OrderedDict
 
 class ImageEngine:
 
     def __init__(self):
         self.window = None
         self.renderer = None
-        self.texture = None
         self.width = 800
         self.height = 480
+        self.current_texture = None
+        self.texture_cache = OrderedDict()
+        self.cache_size = 5
 
     def initialize(self):
         sdl2.ext.init()
@@ -35,12 +38,30 @@ class ImageEngine:
             sdl2.SDL_RENDERER_SOFTWARE
         )
 
+        if not self.renderer:
+            raise RuntimeError(sdl2.SDL_GetError().decode())
         print("Done")
 
     def show(self, image_path):
-        image_bytes = self._prepare_image(image_path)
+        """
+        Loads and displays an image in fullscreen.
+        """
+        texture = self.texture_cache.get(image_path)
 
-        self._create_texture(image_bytes)
+        if texture:
+            self.texture_cache.move_to_end(image_path)
+            self.current_texture = texture
+        else:
+            image_bytes = self._prepare_image(image_path)
+            texture = self._create_texture(image_bytes)
+
+            self.texture_cache[image_path] = texture
+
+            if len(self.texture_cache) > self.cache_size:
+                _, old_texture = self.texture_cache.popitem(last=False)
+                sdl2.SDL_DestroyTexture(old_texture)
+
+            self.current_texture = texture
 
         self._render_texture()
 
@@ -56,9 +77,11 @@ class ImageEngine:
         sdl2.SDL_RenderPresent(self.renderer)
         
     def shutdown(self):
-        if self.texture:
-            sdl2.SDL_DestroyTexture(self.texture)
-            self.texture = None
+        for texture in self.texture_cache.values():
+            sdl2.SDL_DestroyTexture(texture)
+
+        self.texture_cache.clear()
+        self.current_texture = None
 
         if self.renderer:
             sdl2.SDL_DestroyRenderer(self.renderer)
@@ -70,35 +93,41 @@ class ImageEngine:
 
     
     def _prepare_image(self, image_path):
-        image = ImageOps.exif_transpose(Image.open(image_path))
-        image = image.convert("RGBA")
+        """
+        Loads an image, applies EXIF orientation,
+        preserves aspect ratio, and returns RGBA bytes.
+        """
+        try:
+            image = ImageOps.exif_transpose(Image.open(image_path))
+            image = image.convert("RGBA")
 
-        image.thumbnail(
-            (self.width, self.height),
-            Image.Resampling.LANCZOS
-        )
+            image.thumbnail(
+                (self.width, self.height),
+                Image.Resampling.LANCZOS
+            )
 
-        canvas = Image.new(
-            "RGBA",
-            (self.width, self.height),
-            (0, 0, 0, 255)
-        )
+            canvas = Image.new(
+                "RGBA",
+                (self.width, self.height),
+                (0, 0, 0, 255)
+            )
 
-        x = (self.width - image.width) // 2
-        y = (self.height - image.height) // 2
+            x = (self.width - image.width) // 2
+            y = (self.height - image.height) // 2
 
-        canvas.paste(image, (x, y))
+            canvas.paste(image, (x, y))
 
-        return canvas.tobytes()
+            return canvas.tobytes()
+        
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to load '{image_path}': {e}"
+            )
     
 
     def _create_texture(self, image_bytes):
 
-        if self.texture:
-            sdl2.SDL_DestroyTexture(self.texture)
-            self.texture = None
-
-        self.texture = sdl2.SDL_CreateTexture(
+        texture = sdl2.SDL_CreateTexture(
             self.renderer,
             sdl2.SDL_PIXELFORMAT_RGBA32,
             sdl2.SDL_TEXTUREACCESS_STATIC,
@@ -106,22 +135,21 @@ class ImageEngine:
             self.height
         )
 
-        if not self.texture:
-            raise RuntimeError(
-                sdl2.SDL_GetError().decode()
-            )
+        if not texture:
+            raise RuntimeError(sdl2.SDL_GetError().decode())
 
         result = sdl2.SDL_UpdateTexture(
-            self.texture,
+            texture,
             None,
             image_bytes,
             self.width * 4
         )
 
         if result != 0:
-            raise RuntimeError(
-                sdl2.SDL_GetError().decode()
-            )
+            sdl2.SDL_DestroyTexture(texture)
+            raise RuntimeError(sdl2.SDL_GetError().decode())
+
+        return texture
         
 
     
@@ -139,7 +167,7 @@ class ImageEngine:
 
         result = sdl2.SDL_RenderCopy(
             self.renderer,
-            self.texture,
+            self.current_texture,
             None,
             None
         )
