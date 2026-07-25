@@ -13,6 +13,9 @@ class ImageEngine:
     def initialize(self):
         sdl2.ext.init()
 
+        driver = sdl2.SDL_GetCurrentVideoDriver()
+        print("Video Driver:", driver.decode() if driver else "None")
+
         self.window = sdl2.ext.Window(
             "Memora",
             size=(self.width, self.height),
@@ -26,6 +29,12 @@ class ImageEngine:
             -1,
             sdl2.SDL_RENDERER_ACCELERATED
         )
+
+        if not self.renderer:
+            print("Renderer creation failed!")
+            print("SDL Error:", sdl2.SDL_GetError().decode())
+        else:
+            print("Renderer created successfully!")
 
         # Set draw color to red
         sdl2.SDL_SetRenderDrawColor(
