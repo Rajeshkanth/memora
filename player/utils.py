@@ -17,8 +17,8 @@ VIDEO_EXTENSIONS = {
     ".webm"
 }
 
-def _is_image(path):
+def is_image(path):
     return Path(path).suffix.lower() in IMAGE_EXTENSIONS
 
-def _is_video(path):
+def is_video(path):
     return Path(path).suffix.lower() in VIDEO_EXTENSIONS
