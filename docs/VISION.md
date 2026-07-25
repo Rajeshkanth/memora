@@ -4,7 +4,7 @@
 
 ✅ Auto slideshow (update loop)
 
-⬜ Image transitions (fade)
+✅ Image transitions (fade)
 
 ⬜ VideoEngine integration
 
