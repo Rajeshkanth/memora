@@ -13,40 +13,28 @@ class ImageEngine:
     def initialize(self):
         sdl2.ext.init()
 
-        driver = sdl2.SDL_GetCurrentVideoDriver()
-        print("Video Driver:", driver.decode() if driver else "None")
-
         self.window = sdl2.ext.Window(
             "Memora",
-            size=(self.width, self.height),
+            size=(800, 480),
             flags=sdl2.SDL_WINDOW_FULLSCREEN
         )
 
         self.window.show()
 
+        # Force software renderer
         self.renderer = sdl2.SDL_CreateRenderer(
             self.window.window,
             -1,
-            sdl2.SDL_RENDERER_ACCELERATED
+            sdl2.SDL_RENDERER_SOFTWARE
         )
 
-        if not self.renderer:
-            print("Renderer creation failed!")
-            print("SDL Error:", sdl2.SDL_GetError().decode())
-        else:
-            print("Renderer created successfully!")
+        print("Renderer:", self.renderer)
 
-        # Set draw color to red
-        sdl2.SDL_SetRenderDrawColor(
-            self.renderer,
-            255, 0, 0, 255
-        )
-
-        # Clear the screen using that color
+        sdl2.SDL_SetRenderDrawColor(self.renderer, 255, 0, 0, 255)
         sdl2.SDL_RenderClear(self.renderer)
-
-        # Display it
         sdl2.SDL_RenderPresent(self.renderer)
+
+        print("Done")
 
     def show(self, image_path):
         pass
