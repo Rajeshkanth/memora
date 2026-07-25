@@ -65,3 +65,6 @@ class VideoEngine:
             return None
 
         return self.player.get_state()
+    
+    def has_finished(self):
+        return self.get_state() == vlc.State.Ended
