@@ -70,6 +70,7 @@ class SlideshowManager:
 
         elif is_video(media):
             print(f"Video : {media.name}")
+            self.image_engine.clear()
             self.video_engine.play(str(media))
 
     def next(self):
