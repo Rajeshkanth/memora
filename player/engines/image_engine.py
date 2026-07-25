@@ -49,16 +49,19 @@ class ImageEngine:
         texture = self.texture_cache.get(image_path)
 
         if texture:
+            print(f"Cache Hit : {image_path}")
             self.texture_cache.move_to_end(image_path)
             self.current_texture = texture
         else:
+            print(f"Cache Miss : {image_path}")
             image_bytes = self._prepare_image(image_path)
             texture = self._create_texture(image_bytes)
 
             self.texture_cache[image_path] = texture
 
             if len(self.texture_cache) > self.cache_size:
-                _, old_texture = self.texture_cache.popitem(last=False)
+                old_path, old_texture = self.texture_cache.popitem(last=False)
+                print(f"Evicted : {old_path}")
                 sdl2.SDL_DestroyTexture(old_texture)
 
             self.current_texture = texture
