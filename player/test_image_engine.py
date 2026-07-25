@@ -10,7 +10,7 @@ engine.show("media/photo1.jpg")
 
 time.sleep(10)
 
-engine.show("media/photo2.jpg")
+engine.show("media/photo2.jpeg")
 
 time.sleep(10)
 
