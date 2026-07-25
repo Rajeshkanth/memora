@@ -1,4 +1,4 @@
-import vlc
+import mpv
 
 class VideoEngine:
 
@@ -34,6 +34,8 @@ class VideoEngine:
         self.player.set_media(media)
 
         self.player.play()
+
+        self.fin
 
     def stop(self):
         if self.initialized:

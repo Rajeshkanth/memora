@@ -1,7 +1,7 @@
 import time
 
 from engines.image_engine import ImageEngine
-from slideshow_manager import SlideshowManager
+from player.managers.slideshow_manager import SlideshowManager
 
 engine = ImageEngine()
 

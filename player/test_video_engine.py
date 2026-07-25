@@ -1,5 +1,5 @@
 import time
-import vlc
+import mpv
 
 from engines.video_engine import VideoEngine
 
