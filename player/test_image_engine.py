@@ -1,22 +1,39 @@
 import time
 
 from engines.image_engine import ImageEngine
+from slideshow_manager import SlideshowManager
 
 engine = ImageEngine()
 
 engine.initialize()
 
-engine.show("media/photo1.jpg")
+slideShow = SlideshowManager(engine, "media")
 
-time.sleep(10)
+slideShow.start()
 
-engine.show("media/photo2.jpeg")
+time.sleep(2)
 
-time.sleep(10)
+slideShow.next()
 
-engine.show("media/photo1.jpg")
+time.sleep(2)
 
-time.sleep(10)
+slideShow.previous()
+
+time.sleep(2)
+
+engine.shutdown()
+
+# engine.show("media/photo1.jpg")
+
+# time.sleep(10)
+
+# engine.show("media/photo2.jpeg")
+
+# time.sleep(10)
+
+# engine.show("media/photo1.jpg")
+
+# time.sleep(10)
 
 # engine.show("media/photo1.jpg")
 
