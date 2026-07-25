@@ -1,30 +1,17 @@
 import time
-import mpv
+from engines.video_engine import VideoEngine
 
-finished = False
+engine = VideoEngine()
 
+engine.initialize()
 
-def on_end(event):
-    global finished
-    print("Playback finished")
-    finished = True
+engine.play("media/test.mp4")
 
+print("Video started")
 
-player = mpv.MPV(
-    fullscreen=True,
-    keep_open=False,
-)
+while not engine.has_finished():
+    time.sleep(0.2)
 
-player.register_event_callback(on_end)
+print("Video finished")
 
-print("Starting video...")
-
-player.play("media/test.mp4")
-
-# Give MPV time to start playback
-time.sleep(1)
-
-while not finished:
-    time.sleep(0.1)
-
-print("Done")
+engine.shutdown()

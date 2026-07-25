@@ -1,72 +1,39 @@
-import mpv
+import subprocess
+
 
 class VideoEngine:
 
     def __init__(self):
-        self.instance = None
-        self.player = None
-
-        self.initialized = False
+        self.process = None
 
     def initialize(self):
-        if self.initialized:
-            return
-
-        self.instance = vlc.Instance(
-            "--quiet"
-        )
-
-        self.player = self.instance.media_player_new()
-
-        self.initialized = True
+        pass
 
     def play(self, video_path):
-        
-        if not self.initialized:
-            raise RuntimeError(
-                "VideoEngine is not initialized."
-            )
+        self.stop()
 
-        self.player.stop()
-
-        media = self.instance.media_new(video_path)
-
-        self.player.set_media(media)
-
-        self.player.play()
-
-        self.fin
+        self.process = subprocess.Popen(
+            [
+                "mpv",
+                "--fullscreen",
+                "--no-terminal",
+                "--really-quiet",
+                video_path,
+            ]
+        )
 
     def stop(self):
-        if self.initialized:
-            self.player.stop()
+        if self.process and self.process.poll() is None:
+            self.process.terminate()
+            self.process.wait()
 
-    def is_playing(self):
-        if not self.initialized:
-            return False
+        self.process = None
 
-        return bool(self.player.is_playing())
+    def has_finished(self):
+        if self.process is None:
+            return True
+
+        return self.process.poll() is not None
 
     def shutdown(self):
-        if not self.initialized:
-            return
-
-        if self.player:
-            self.player.stop()
-            self.player.release()
-
-        if self.instance:
-            self.instance.release()
-
-        self.player = None
-        self.instance = None
-        self.initialized = False
-
-    def get_state(self):
-        if not self.initialized:
-            return None
-
-        return self.player.get_state()
-    
-    def has_finished(self):
-        return self.get_state() == vlc.State.Ended
+        self.stop()
