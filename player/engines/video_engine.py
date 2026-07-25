@@ -27,9 +27,9 @@ class VideoEngine:
                 "VideoEngine is not initialized."
             )
 
-        media = self.instance.media_new(
-            video_path
-        )
+        self.player.stop()
+
+        media = self.instance.media_new(video_path)
 
         self.player.set_media(media)
 
@@ -49,10 +49,12 @@ class VideoEngine:
         if not self.initialized:
             return
 
-        self.player.stop()
+        if self.player:
+            self.player.stop()
+            self.player.release()
 
-        self.player.release()
-        self.instance.release()
+        if self.instance:
+            self.instance.release()
 
         self.player = None
         self.instance = None
