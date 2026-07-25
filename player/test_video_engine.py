@@ -5,3 +5,5 @@ engine = VideoEngine()
 engine.initialize()
 
 print("Video engine initiated successfully")
+
+engine.play("media/test.mp4")

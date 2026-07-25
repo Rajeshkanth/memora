@@ -21,7 +21,19 @@ class VideoEngine:
         self.initialized = True
 
     def play(self, video_path):
-        pass
+        
+        if not self.initialized:
+            raise RuntimeError(
+                "VideoEngine is not initialized."
+            )
+
+        media = self.instance.media_new(
+            video_path
+        )
+
+        self.player.set_media(media)
+
+        self.player.play()
 
     def stop(self):
         pass
