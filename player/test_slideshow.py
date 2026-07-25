@@ -1,6 +1,6 @@
 import time
 
-from player.managers.slideshow_manager import SlideshowManager
+from managers.slideshow_manager import SlideshowManager
 
 slideshow = SlideshowManager("media")
 
