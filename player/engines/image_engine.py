@@ -2,6 +2,7 @@ import sdl2
 import sdl2.ext
 from PIL import Image, ImageOps
 from collections import OrderedDict
+import time
 
 class ImageEngine:
 
@@ -51,7 +52,6 @@ class ImageEngine:
         if texture:
             print(f"Cache Hit : {image_path}")
             self.texture_cache.move_to_end(image_path)
-            self.current_texture = texture
         else:
             print(f"Cache Miss : {image_path}")
             image_bytes = self._prepare_image(image_path)
@@ -64,9 +64,17 @@ class ImageEngine:
                 print(f"Evicted : {old_path}")
                 sdl2.SDL_DestroyTexture(old_texture)
 
+        if self.current_texture is None:
+            # First image
             self.current_texture = texture
 
-        self._render_texture()
+            self._clear()
+            self._render_texture(texture)
+            self._present()
+
+        else:
+            # Every image after the first
+            self.fade_to(texture)
 
     def clear(self):
         sdl2.SDL_SetRenderDrawColor(
@@ -140,6 +148,11 @@ class ImageEngine:
 
         if not texture:
             raise RuntimeError(sdl2.SDL_GetError().decode())
+        
+        sdl2.SDL_SetTextureBlendMode(
+            texture,
+            sdl2.SDL_BLENDMODE_BLEND
+        )
 
         result = sdl2.SDL_UpdateTexture(
             texture,
@@ -156,7 +169,34 @@ class ImageEngine:
         
 
     
-    def _render_texture(self):
+    def _render_texture(self, texture, alpha=255):
+
+        # self.clear()
+
+        sdl2.SDL_SetTextureAlphaMod(
+            texture,
+            alpha
+        )
+
+        result = sdl2.SDL_RenderCopy(
+            self.renderer,
+            texture,
+            None,
+            None
+        )
+
+        if result != 0:
+            raise RuntimeError(
+                sdl2.SDL_GetError().decode()
+            )
+
+        # sdl2.SDL_RenderPresent(self.renderer)
+
+    def _present(self):
+
+        sdl2.SDL_RenderPresent(self.renderer)
+
+    def _clear(self):
 
         sdl2.SDL_SetRenderDrawColor(
             self.renderer,
@@ -168,16 +208,32 @@ class ImageEngine:
 
         sdl2.SDL_RenderClear(self.renderer)
 
-        result = sdl2.SDL_RenderCopy(
-            self.renderer,
-            self.current_texture,
-            None,
-            None
-        )
+    def fade_to(self, next_texture, duration=0.4):
 
-        if result != 0:
-            raise RuntimeError(
-                sdl2.SDL_GetError().decode()
+        fps = 60
+        steps = int(duration * fps)
+        delay = 1 / fps
+
+        for i in range(steps + 1):
+
+            alpha = int((i / steps) * 255)
+
+            self._clear()
+
+            # Draw current image fading out
+            self._render_texture(
+                self.current_texture,
+                255 - alpha
             )
 
-        sdl2.SDL_RenderPresent(self.renderer)
+            # Draw next image fading in
+            self._render_texture(
+                next_texture,
+                alpha
+            )
+
+            self._present()
+
+            time.sleep(delay)
+
+        self.current_texture = next_texture

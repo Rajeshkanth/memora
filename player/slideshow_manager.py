@@ -58,6 +58,8 @@ class SlideshowManager:
 
         self.show_current()
 
+        self.last_switch = time.monotonic()
+
     def previous(self):
 
         if not self.media:

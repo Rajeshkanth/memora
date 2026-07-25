@@ -2,7 +2,7 @@
 
 ✅ SlideshowManager
 
-⬜ Auto slideshow (update loop)
+✅ Auto slideshow (update loop)
 
 ⬜ Image transitions (fade)
 
