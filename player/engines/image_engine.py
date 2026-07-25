@@ -21,12 +21,26 @@ class ImageEngine:
 
         self.window.show()
 
-        # Force software renderer
+        # # Force software renderer
+        # self.renderer = sdl2.SDL_CreateRenderer(
+        #     self.window.window,
+        #     -1,
+        #     sdl2.SDL_RENDERER_SOFTWARE
+        # )
+
         self.renderer = sdl2.SDL_CreateRenderer(
             self.window.window,
             -1,
-            sdl2.SDL_RENDERER_SOFTWARE
+            sdl2.SDL_RENDERER_ACCELERATED
         )
+
+        if not self.renderer:
+            print("Falling back to software renderer...")
+            self.renderer = sdl2.SDL_CreateRenderer(
+                self.window.window,
+                -1,
+                sdl2.SDL_RENDERER_SOFTWARE
+            )
 
         print("Renderer:", self.renderer)
 
