@@ -36,7 +36,8 @@ class VideoEngine:
         self.player.play()
 
     def stop(self):
-        pass
+        if self.initialized:
+            self.player.stop()
 
     def is_playing(self):
         if not self.initialized:
@@ -45,4 +46,20 @@ class VideoEngine:
         return bool(self.player.is_playing())
 
     def shutdown(self):
-        pass
+        if not self.initialized:
+            return
+
+        self.player.stop()
+
+        self.player.release()
+        self.instance.release()
+
+        self.player = None
+        self.instance = None
+        self.initialized = False
+
+    def get_state(self):
+        if not self.initialized:
+            return None
+
+        return self.player.get_state()
