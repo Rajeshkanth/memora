@@ -167,18 +167,27 @@ class ImageEngine:
                 f"Failed to load '{image_path}': {e}"
             )
         
-    def _prepare_image(self, image_path):
-        """
-        Loads an image from disk and prepares it for rendering.
-        """
-        try:
-            image = ImageOps.exif_transpose(Image.open(image_path))
-            return self._prepare_pil_image(image)
+    def _prepare_pil_image(self, image):
+        
+        image = image.convert("RGBA")
 
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to load '{image_path}': {e}"
-            )
+        image.thumbnail(
+            (self.width, self.height),
+            Image.Resampling.LANCZOS
+        )
+
+        canvas = Image.new(
+            "RGBA",
+            (self.width, self.height),
+            (0, 0, 0, 255)
+        )
+
+        x = (self.width - image.width) // 2
+        y = (self.height - image.height) // 2
+
+        canvas.paste(image, (x, y))
+
+        return canvas.tobytes()
         
     def show_pil_image(self, image):
 
