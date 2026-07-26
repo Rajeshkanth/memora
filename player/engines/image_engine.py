@@ -19,6 +19,9 @@ class ImageEngine:
     def initialize(self):
         sdl2.ext.init()
 
+        driver = sdl2.SDL_GetCurrentVideoDriver()
+        print(driver.decode())
+
         self.window = sdl2.ext.Window(
             "Memora",
             size=(800, 480),
@@ -26,6 +29,10 @@ class ImageEngine:
         )
 
         self.window.show()
+
+        print(self.window)
+        print(self.window.window)
+        print(type(self.window.window))
 
         sdl2.SDL_ShowCursor(sdl2.SDL_DISABLE)
 
