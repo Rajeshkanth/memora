@@ -52,4 +52,8 @@ engine = VideoEngine()
 
 engine.open("media/test.mp4")
 
-engine.save_first_frame()
+image = engine.get_first_frame()
+
+print(type(image))
+print(image.size)
+print(image.mode)
