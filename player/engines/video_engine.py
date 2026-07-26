@@ -23,7 +23,9 @@ class VideoEngine:
             [
                 "mpv",
                 "--fullscreen",
+                "--vo=sdl",
                 "--no-terminal",
+                "--really-quiet",
                 video,
             ]
         )
