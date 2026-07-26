@@ -90,6 +90,9 @@ class ImageEngine:
             # Every image after the first
             self.fade_to(texture)
 
+    # def render_frame(frame):
+
+
     def clear(self):
         sdl2.SDL_SetRenderDrawColor(
             self.renderer,

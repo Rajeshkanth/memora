@@ -76,6 +76,12 @@ class SlideshowManager:
             self.image_engine.shutdown()
             self.video_engine.play(str(media))
 
+            while self.video_engine.has_frame():
+
+                frame = self.video_engine.next_frame()
+
+                self.image_engine.render_frame(frame) 
+
     def next(self):
 
         if not self.media:
