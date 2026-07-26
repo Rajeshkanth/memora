@@ -14,6 +14,7 @@ class ImageEngine:
         self.current_texture = None
         self.texture_cache = OrderedDict()
         self.cache_size = 5
+        self.initialized = False
 
     def initialize(self):
         sdl2.ext.init()
@@ -39,6 +40,8 @@ class ImageEngine:
             sdl2.SDL_RENDERER_SOFTWARE
         )
 
+        self.initialized = True
+
         if not self.renderer:
             raise RuntimeError(sdl2.SDL_GetError().decode())
         print("Done")
@@ -47,6 +50,10 @@ class ImageEngine:
         """
         Loads and displays an image in fullscreen.
         """
+
+        if not self.initialized:
+            self.initialize()
+        
         texture = self.texture_cache.get(image_path)
 
         if texture:
@@ -101,6 +108,8 @@ class ImageEngine:
             self.window.close()
 
         sdl2.ext.quit()
+
+        self.initialized = False
 
     
     def _prepare_image(self, image_path):

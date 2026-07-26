@@ -65,12 +65,15 @@ class SlideshowManager:
 
         if is_image(media):
             print(f"Image : {media.name}")
+            if not self.image_engine.initialized:
+                self.image_engine.initialize()
             self.video_engine.stop()
             self.image_engine.show(str(media))
 
         elif is_video(media):
             print(f"Video : {media.name}")
             self.image_engine.clear()
+            self.image_engine.shutdown()
             self.video_engine.play(str(media))
 
     def next(self):
