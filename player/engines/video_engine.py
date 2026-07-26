@@ -65,11 +65,19 @@ class VideoEngine:
         self.stream = self.container.streams.video[0]
 
         print("Video opened successfully.")
-
         print(f"Resolution : {self.stream.width} x {self.stream.height}")
-
         print(f"FPS : {float(self.stream.average_rate):.2f}")
-
         print(f"Frames : {self.stream.frames}")
-
         print(f"Duration : {float(self.stream.duration * self.stream.time_base):.2f} sec")
+
+    def save_first_frame(self, output_path="frame.jpg"):
+
+        for frame in self.container.decode(video=0):
+
+            image = frame.to_image()
+
+            image.save(output_path)
+
+            print(f"Saved first frame to {output_path}")
+
+            break

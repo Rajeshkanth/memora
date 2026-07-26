@@ -51,3 +51,5 @@ from engines.video_engine import VideoEngine
 engine = VideoEngine()
 
 engine.open("media/test.mp4")
+
+engine.save_first_frame()
