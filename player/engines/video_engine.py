@@ -62,7 +62,14 @@ class VideoEngine:
     def open(self, video_path):
 
         self.container = av.open(video_path)
-
         self.stream = self.container.streams.video[0]
 
         print("Video opened successfully.")
+
+        print(f"Resolution : {self.stream.width} x {self.stream.height}")
+
+        print(f"FPS : {float(self.stream.average_rate):.2f}")
+
+        print(f"Frames : {self.stream.frames}")
+
+        print(f"Duration : {float(self.stream.duration * self.stream.time_base):.2f} sec")
