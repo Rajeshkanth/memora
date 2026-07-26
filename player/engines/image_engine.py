@@ -122,37 +122,81 @@ class ImageEngine:
         self.initialized = False
 
     
+    # def _prepare_image(self, image_path):
+    #     """
+    #     Loads an image, applies EXIF orientation,
+    #     preserves aspect ratio, and returns RGBA bytes.
+    #     """
+    #     try:
+    #         image = ImageOps.exif_transpose(Image.open(image_path))
+    #         image = image.convert("RGBA")
+
+    #         image.thumbnail(
+    #             (self.width, self.height),
+    #             Image.Resampling.LANCZOS
+    #         )
+
+    #         canvas = Image.new(
+    #             "RGBA",
+    #             (self.width, self.height),
+    #             (0, 0, 0, 255)
+    #         )
+
+    #         x = (self.width - image.width) // 2
+    #         y = (self.height - image.height) // 2
+
+    #         canvas.paste(image, (x, y))
+
+    #         return canvas.tobytes()
+        
+    #     except Exception as e:
+    #         raise RuntimeError(
+    #             f"Failed to load '{image_path}': {e}"
+    #         )
+
     def _prepare_image(self, image_path):
         """
-        Loads an image, applies EXIF orientation,
-        preserves aspect ratio, and returns RGBA bytes.
+        Loads an image from disk and prepares it for rendering.
         """
         try:
             image = ImageOps.exif_transpose(Image.open(image_path))
-            image = image.convert("RGBA")
+            return self._prepare_pil_image(image)
 
-            image.thumbnail(
-                (self.width, self.height),
-                Image.Resampling.LANCZOS
-            )
-
-            canvas = Image.new(
-                "RGBA",
-                (self.width, self.height),
-                (0, 0, 0, 255)
-            )
-
-            x = (self.width - image.width) // 2
-            y = (self.height - image.height) // 2
-
-            canvas.paste(image, (x, y))
-
-            return canvas.tobytes()
-        
         except Exception as e:
             raise RuntimeError(
                 f"Failed to load '{image_path}': {e}"
             )
+        
+    def _prepare_image(self, image_path):
+        """
+        Loads an image from disk and prepares it for rendering.
+        """
+        try:
+            image = ImageOps.exif_transpose(Image.open(image_path))
+            return self._prepare_pil_image(image)
+
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to load '{image_path}': {e}"
+            )
+        
+    def show_pil_image(self, image):
+
+        if not self.initialized:
+            self.initialize()
+
+        image_bytes = self._prepare_pil_image(image)
+
+        texture = self._create_texture(image_bytes)
+
+        if self.current_texture:
+            sdl2.SDL_DestroyTexture(self.current_texture)
+
+        self.current_texture = texture
+
+        self._clear()
+        self._render_texture(texture)
+        self._present()
     
 
     def _create_texture(self, image_bytes):

@@ -47,13 +47,18 @@
 # tests/test_video_engine.py
 
 from engines.video_engine import VideoEngine
+from engines.image_engine import ImageEngine
 
-engine = VideoEngine()
+video = VideoEngine()
+video.open("media/test.mp4")
 
-engine.open("media/test.mp4")
+frame = video.get_first_frame()
 
-image = engine.get_first_frame()
+engine = ImageEngine()
+engine.initialize()
 
-print(type(image))
-print(image.size)
-print(image.mode)
+engine.show_pil_image(frame)
+
+input("Press Enter to exit...")
+
+engine.shutdown()
