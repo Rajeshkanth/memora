@@ -1,6 +1,11 @@
 import subprocess
 from pathlib import Path
+import os
 
+print("SDL_VIDEODRIVER =", os.environ.get("SDL_VIDEODRIVER"))
+print("DISPLAY =", os.environ.get("DISPLAY"))
+print("WAYLAND_DISPLAY =", os.environ.get("WAYLAND_DISPLAY"))
+print("XDG_SESSION_TYPE =", os.environ.get("XDG_SESSION_TYPE"))
 
 class VideoEngine:
 
@@ -24,10 +29,13 @@ class VideoEngine:
                 "mpv",
                 "--fullscreen",
                 "--vo=sdl",
-                "--no-terminal",
-                "--really-quiet",
-                video,
-            ]
+                video_path,
+            ],
+            stdin=subprocess.DEVNULL,
+            stdout=None,
+            stderr=None,
+            start_new_session=True,
+            cwd=os.getcwd(),
         )
 
     def stop(self):
