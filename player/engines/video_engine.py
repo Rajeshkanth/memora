@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 
 
 class VideoEngine:
@@ -12,13 +13,18 @@ class VideoEngine:
     def play(self, video_path):
         self.stop()
 
+        print("Launching: ", video_path)
+
+        video = str(Path(video_path).resolve())
+
+        print(video)
+
         self.process = subprocess.Popen(
             [
                 "mpv",
                 "--fullscreen",
                 "--no-terminal",
-                "--really-quiet",
-                video_path,
+                video,
             ]
         )
 
