@@ -52,12 +52,12 @@ from engines.image_engine import ImageEngine
 video = VideoEngine()
 video.open("media/test.mp4")
 
-frame = video.get_first_frame()
 
 engine = ImageEngine()
 engine.initialize()
 
-engine.show_pil_image(frame)
+for frame in video.frames():
+    engine.show_pil_image(frame)
 
 input("Press Enter to exit...")
 

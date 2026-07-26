@@ -65,10 +65,6 @@ class VideoEngine:
 
         print("Video opened successfully.")
 
-    def get_first_frame(self):
-
+    def frames(self):
         for frame in self.container.decode(video=0):
-
-            return frame.to_image()
-
-        return None
+            yield frame.to_image()
