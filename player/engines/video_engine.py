@@ -24,6 +24,7 @@ class VideoEngine:
                 "mpv",
                 "--fullscreen",
                 "--vo=gpu",
+                "--no-terminal"
                 video_path,
             ],
             stdin=subprocess.DEVNULL,
