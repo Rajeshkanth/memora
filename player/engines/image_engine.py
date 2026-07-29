@@ -15,6 +15,7 @@ class ImageEngine:
         self.texture_cache = OrderedDict()
         self.cache_size = 5
         self.initialized = False
+        self.video_texture = None
 
     def initialize(self):
         sdl2.ext.init()
@@ -111,6 +112,9 @@ class ImageEngine:
         self.texture_cache.clear()
         self.current_texture = None
 
+        if self.video_texture:
+            sdl2.SDL_DestroyTexture(self.video_texture)
+
         if self.renderer:
             sdl2.SDL_DestroyRenderer(self.renderer)
 
@@ -168,7 +172,7 @@ class ImageEngine:
             )
         
     def _prepare_pil_image(self, image):
-        
+
         image = image.convert("RGBA")
 
         image.thumbnail(
@@ -194,17 +198,22 @@ class ImageEngine:
         if not self.initialized:
             self.initialize()
 
+        self._create_video_texture()
+
         image_bytes = self._prepare_pil_image(image)
 
-        texture = self._create_texture(image_bytes)
+        result = sdl2.SDL_UpdateTexture(
+            self.video_texture,
+            None,
+            image_bytes,
+            self.width * 4
+        )
 
-        if self.current_texture:
-            sdl2.SDL_DestroyTexture(self.current_texture)
-
-        self.current_texture = texture
+        if result != 0:
+            raise RuntimeError(sdl2.SDL_GetError().decode())
 
         self._clear()
-        self._render_texture(texture)
+        self._render_texture(self.video_texture)
         self._present()
     
 
@@ -238,6 +247,22 @@ class ImageEngine:
             raise RuntimeError(sdl2.SDL_GetError().decode())
 
         return texture
+    
+    def _create_video_texture(self):
+
+        if self.video_texture:
+            return
+
+        self.video_texture = sdl2.SDL_CreateTexture(
+            self.renderer,
+            sdl2.SDL_PIXELFORMAT_RGBA32,
+            sdl2.SDL_TEXTUREACCESS_STREAMING,
+            self.width,
+            self.height
+        )
+
+        if not self.video_texture:
+            raise RuntimeError(sdl2.SDL_GetError().decode())
         
 
     
