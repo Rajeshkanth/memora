@@ -71,4 +71,5 @@ class VideoEngine:
 
     def frames(self):
         for frame in self.container.decode(video=0):
-            yield frame.to_image()
+            pts_time = frame.pts * frame.time_base
+            yield frame.to_image(), float(pts_time)

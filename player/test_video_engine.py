@@ -57,18 +57,22 @@ engine = ImageEngine()
 engine.initialize()
 
 try:
-    for frame in video.frames():
+    start_time = time.perf_counter()
 
-        frame_start = time.perf_counter()
+    for image, pts in video.frames():
 
-        engine.show_pil_image(frame)
+        target_time = start_time + pts
 
-        elapsed = time.perf_counter() - frame_start
+        while True:
+            now = time.perf_counter()
+            remaining = target_time - now
 
-        remaining = video.frame_duration - elapsed
+            if remaining <= 0:
+                break
 
-        if remaining > 0:
-            time.sleep(remaining)
+            time.sleep(min(remaining, 0.002))
+
+        engine.show_pil_image(image)
 
 finally:
     engine.shutdown()
