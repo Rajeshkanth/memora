@@ -63,7 +63,11 @@ class VideoEngine:
         self.container = av.open(video_path)
         self.stream = self.container.streams.video[0]
 
-        print("Video opened successfully.")
+        self.fps = float(self.stream.average_rate)
+        self.frame_duration = 1.0 / self.fps
+
+        print(f"FPS: {self.fps}")
+        print(f"Frame Duration: {self.frame_duration * 1000:.2f} ms")
 
     def frames(self):
         for frame in self.container.decode(video=0):

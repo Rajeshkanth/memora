@@ -1,4 +1,4 @@
-# import time
+import time
 # import mpv
 
 # from engines.video_engine import VideoEngine
@@ -56,8 +56,22 @@ video.open("media/test.mp4")
 engine = ImageEngine()
 engine.initialize()
 
-for frame in video.frames():
-    engine.show_pil_image(frame)
+try:
+    for frame in video.frames():
+
+        frame_start = time.perf_counter()
+
+        engine.show_pil_image(frame)
+
+        elapsed = time.perf_counter() - frame_start
+
+        remaining = video.frame_duration - elapsed
+
+        if remaining > 0:
+            time.sleep(remaining)
+
+finally:
+    engine.shutdown()
 
 input("Press Enter to exit...")
 
