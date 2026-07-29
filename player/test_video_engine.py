@@ -9,11 +9,11 @@ engine.initialize()
 
 print("Video engine initialized successfully")
 
-engine.play("media/test.mp4")
+engine.play("media/a.mp4")
 
 time.sleep(0.5)
 
-engine.play("media/test.mp4")
+engine.play("media/a.mp4")
 
 # Wait until playback actually starts
 # while True:
