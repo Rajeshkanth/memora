@@ -73,8 +73,9 @@ class SlideshowManager:
         elif is_video(media):
             print(f"Video : {media.name}")
             self.image_engine.clear()
-            # self.image_engine.shutdown()
-            time.sleep(0.5)
+            self.image_engine.clear_black()
+            self.image_engine.shutdown()
+            time.sleep(0.1)
             self.video_engine.play(str(media))
 
     def next(self):

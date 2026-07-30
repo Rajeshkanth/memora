@@ -30,7 +30,7 @@ class VideoEngine:
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
             stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
-            # preexec_fn=os.setpgrp,       # Detaches the process cleanly on Linux/Pi
+            preexec_fn=os.setpgrp,       # Detaches the process cleanly on Linux/Pi
             cwd=os.getcwd(),
         )
 
