@@ -101,10 +101,6 @@ class ImageEngine:
         sdl2.SDL_RenderClear(self.renderer)
         sdl2.SDL_RenderPresent(self.renderer)
 
-    def clear_black(self):
-        sdl2.SDL_SetRenderDrawColor(self.renderer, 0, 0, 0, 255)
-        sdl2.SDL_RenderClear(self.renderer)
-        sdl2.SDL_RenderPresent(self.renderer)
         
     def shutdown(self):
         for texture in self.texture_cache.values():
@@ -119,7 +115,7 @@ class ImageEngine:
         if self.window:
             self.window.close()
 
-        sdl2.ext.quit()
+        # sdl2.ext.quit()
 
         self.initialized = False
 
