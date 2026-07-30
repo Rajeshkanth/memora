@@ -30,10 +30,6 @@ class ImageEngine:
 
         self.window.show()
 
-        print(self.window)
-        print(self.window.window)
-        print(type(self.window.window))
-
         sdl2.SDL_ShowCursor(sdl2.SDL_DISABLE)
 
         # Force software renderer
@@ -115,7 +111,7 @@ class ImageEngine:
         if self.window:
             self.window.close()
 
-        # sdl2.ext.quit()
+        sdl2.ext.quit()
 
         self.initialized = False
 

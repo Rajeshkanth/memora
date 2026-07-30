@@ -74,7 +74,7 @@ class SlideshowManager:
             print(f"Video : {media.name}")
             self.image_engine.clear()
             self.image_engine.shutdown()
-            time.sleep(0.5)
+            time.sleep(0.1)
             self.video_engine.play(str(media))
 
     def next(self):
