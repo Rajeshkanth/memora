@@ -72,8 +72,9 @@ class SlideshowManager:
         if media is None:
             return
 
-        # if self.media_manager.has_changed():
-        #     self.media_manager.refresh()
+        if self.media_manager.refresh_required:
+            print("Refreshing playlist")
+            self.media_manager.refresh()
 
         now = time.monotonic()
 
@@ -97,5 +98,6 @@ class SlideshowManager:
 
         self.stop()
 
+        self.media_manager.shutdown()
         self.image_engine.shutdown()
         self.video_engine.shutdown()

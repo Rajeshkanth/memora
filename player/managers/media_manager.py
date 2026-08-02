@@ -1,4 +1,6 @@
 from pathlib import Path
+from watchdog.observers import Observer
+from managers.media_watcher import MediaWatcher
 
 from utils import is_image, is_video
 
@@ -15,6 +17,20 @@ class MediaManager:
 
         self.refresh()
 
+        self.observer = Observer()
+
+        handler = MediaWatcher(self)
+
+        self.observer.schedule(
+            handler,
+            str(self.media_dir),
+            recursive=False
+        )
+
+        self.observer.start()
+
+        self.refresh_required = False
+
 
     def refresh(self):
 
@@ -28,6 +44,8 @@ class MediaManager:
             self.current_index = 0
         elif self.current_index >= len(self.media):
             self.current_index = 0
+
+        self.refresh_required = False
 
 
     @property
@@ -52,3 +70,8 @@ class MediaManager:
 
     def has_media(self):
         return len(self.media) > 0
+
+    def shutdown(self):
+
+        self.observer.stop()
+        self.observer.join()
