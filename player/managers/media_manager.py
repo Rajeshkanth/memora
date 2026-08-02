@@ -48,7 +48,7 @@ class MediaManager:
             self.current_index + 1
         ) % len(self.media)
 
-        return self.current()
+        return self.current
 
     def has_media(self):
         return len(self.media) > 0
