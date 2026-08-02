@@ -53,6 +53,7 @@ class WifiManager:
                     "ssid": ssid,
                     "signal": int(signal),
                     "security": security,
+                    # "connected":
                 }
             )
 
@@ -61,3 +62,25 @@ class WifiManager:
             key=lambda x: x["signal"],
             reverse=True,
         )
+
+    @staticmethod
+    def connect(ssid: str, password: str):
+
+        result = subprocess.run(
+            [
+                "nmcli",
+                "device",
+                "wifi",
+                "connect",
+                ssid,
+                "password",
+                password,
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        return {
+            "success": result.returncode == 0,
+            "message": result.stdout.strip() or result.stderr.strip(),
+        }

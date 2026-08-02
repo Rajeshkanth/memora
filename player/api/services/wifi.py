@@ -7,3 +7,11 @@ class WifiService:
     def scan():
 
         return WifiManager.scan()
+
+    @staticmethod
+    def connect(request):
+
+        return WifiManager.connect(
+            request.ssid,
+            request.password,
+        )
