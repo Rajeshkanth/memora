@@ -13,7 +13,7 @@ class WifiManager:
             [
                 "-t",
                 "-f",
-                "SSID,SIGNAL,SECURITY",
+                "IN-USE,SSID,SIGNAL,SECURITY",
                 "device",
                 "wifi",
                 "list",
@@ -27,8 +27,6 @@ class WifiManager:
 
         networks = {}
 
-        seen = set()
-
         for line in result.stdout.splitlines():
 
             parts = line.split(":", 3)
@@ -36,15 +34,15 @@ class WifiManager:
             if len(parts) < 4:
                 continue
 
-            in_use = parts[0]
-            ssid = parts[1]
+            in_use = parts[0].strip()
+            ssid = parts[1].strip()
             signal = int(parts[2])
-            security = parts[3]
+            security = parts[3].strip()
 
             if not ssid:
                 continue
 
-            connected = (in_use == "*")
+            connected = in_use == "*"
 
             existing = networks.get(ssid)
 
@@ -59,21 +57,19 @@ class WifiManager:
 
                 continue
 
-            # Keep strongest signal
             if signal > existing["signal"]:
                 existing["signal"] = signal
                 existing["security"] = security
 
-            # Preserve connected state
             if connected:
                 existing["connected"] = True
 
         return sorted(
-            networks.values,
+            networks.values(),
             key=lambda x: (
-                not x["connected"], 
-                -x["signal"]),
-            reverse=True,
+                not x["connected"],
+                -x["signal"]
+            )
         )
 
     @staticmethod
