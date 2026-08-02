@@ -25,43 +25,54 @@ class WifiManager:
         if result.returncode != 0:
             raise RuntimeError(result.stderr)
 
-        networks = []
+        networks = {}
 
         seen = set()
 
         for line in result.stdout.splitlines():
 
-            parts = line.split(":")
+            parts = line.split(":", 3)
 
-            if len(parts) < 3:
+            if len(parts) < 4:
                 continue
 
-            ssid = parts[0].strip()
-
-            signal = parts[1].strip()
-
-            security = ":".join(parts[2:]).strip()
+            in_use = parts[0]
+            ssid = parts[1]
+            signal = int(parts[2])
+            security = parts[3]
 
             if not ssid:
                 continue
 
-            if ssid in seen:
+            connected = (in_use == "*")
+
+            existing = networks.get(ssid)
+
+            if existing is None:
+
+                networks[ssid] = {
+                    "ssid": ssid,
+                    "signal": signal,
+                    "security": security,
+                    "connected": connected,
+                }
+
                 continue
 
-            seen.add(ssid)
+            # Keep strongest signal
+            if signal > existing["signal"]:
+                existing["signal"] = signal
+                existing["security"] = security
 
-            networks.append(
-                {
-                    "ssid": ssid,
-                    "signal": int(signal),
-                    "security": security,
-                    # "connected":
-                }
-            )
+            # Preserve connected state
+            if connected:
+                existing["connected"] = True
 
         return sorted(
-            networks,
-            key=lambda x: x["signal"],
+            networks.values,
+            key=lambda x: (
+                not x["connected"], 
+                -x["signal"]),
             reverse=True,
         )
 
