@@ -15,3 +15,8 @@ def networks():
 def connect(request: WifiConnectRequest):
 
     return WifiService.connect(request)
+
+@router.get("/current")
+def current():
+
+    return WifiService.current()

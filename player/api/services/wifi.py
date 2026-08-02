@@ -15,3 +15,8 @@ class WifiService:
             request.ssid,
             request.password,
         )
+
+    @staticmethod
+    def current():
+
+        return WifiManager.current()

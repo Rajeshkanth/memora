@@ -3,12 +3,14 @@ import subprocess
 
 class WifiManager:
 
+    NMCLI = ["sudo", "nmcli"]
+
     @staticmethod
     def scan():
 
         result = subprocess.run(
+            WifiManager.NMCLI +
             [
-                "nmcli",
                 "-t",
                 "-f",
                 "SSID,SIGNAL,SECURITY",
@@ -84,3 +86,46 @@ class WifiManager:
             "success": result.returncode == 0,
             "message": result.stdout.strip() or result.stderr.strip(),
         }
+
+    @staticmethod
+    def current():
+
+        result = subprocess.run(
+            WifiManager.NMCLI + [
+                "-t",
+                "-f",
+                "ACTIVE,SSID,SIGNAL",
+                "device",
+                "wifi",
+            ],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(result.stderr)
+
+        for line in result.stdout.splitlines():
+
+            parts = line.split(":")
+
+            if len(parts) < 3:
+                continue
+
+            if parts[0] != "yes":
+                continue
+
+            return {
+                "ssid": parts[1],
+                "signal": int(parts[2]),
+            }
+
+        return None
+
+    @staticmethod
+    def _run_nmcli(*args):
+        return subprocess.run(
+            ["sudo", "nmcli", *args],
+            capture_output=True,
+            text=True,
+        )
