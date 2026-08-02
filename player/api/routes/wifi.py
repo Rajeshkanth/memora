@@ -14,8 +14,5 @@ def connect(request: WifiConnectRequest):
 @router.get("/wifi")
 def current():
 
-    return {
-        "current": WifiService.current(),
-        "available": WifiService.scan()
-    }
+    return WifiService.scan()
 
