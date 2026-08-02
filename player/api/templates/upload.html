@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Upload Media</h1>
+
+    <form
+        action="/upload"
+        method="post"
+        enctype="multipart/form-data">
+
+        <input
+            type="file"
+            name="files"
+            multiple
+            accept="image/*,video/*">
+
+        <br><br>
+
+        <button type="submit">
+
+            Upload
+
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="/">← Back</a>
+
+</div>
+
+</body>
+
+</html>
