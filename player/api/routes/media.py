@@ -1,5 +1,5 @@
-from fastapi import APIRouter, File, Request, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, File, Request, UploadFile, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from api.services.media import MediaService
@@ -17,6 +17,20 @@ async def upload_page(request: Request):
         context={"title": "Upload Media"},
     )
 
+@router.get("/gallery", response_class=HTMLResponse)
+async def gallery(request: Request):
+
+    media = MediaService.list()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="gallery.html",
+        context={
+            "title": "Memories",
+            "media": media,
+        },
+    )
+
 
 @router.post("/upload")
 async def upload(files: list[UploadFile] = File(...)):
@@ -27,3 +41,13 @@ async def upload(files: list[UploadFile] = File(...)):
         "uploaded": count,
         "message": f"{count} file(s) uploaded successfully."
     }
+
+@router.post("/gallery/delete")
+async def delete(filename: str = Form(...)):
+
+    MediaService.delete(filename)
+
+    return RedirectResponse(
+        "/gallery",
+        status_code=303,
+    )

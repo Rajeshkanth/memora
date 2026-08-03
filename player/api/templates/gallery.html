@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="mb-10">
+
+    <a
+        href="/"
+        class="text-zinc-400 hover:text-white">
+
+        ← Back
+
+    </a>
+
+</div>
+
+<h1
+    class="mb-10 text-center text-4xl font-light tracking-[0.4rem]">
+
+    MEMORIES
+
+</h1>
+
+{% if media %}
+
+<div class="grid grid-cols-2 gap-5">
+
+    {% for item in media %}
+
+        <div
+            class="overflow-hidden rounded-3xl bg-zinc-900">
+
+            {% if item.is_video %}
+
+                <video
+                    class="h-48 w-full object-cover"
+                    muted>
+
+                    <source src="{{ item.url }}">
+
+                </video>
+
+            {% else %}
+
+                <img
+                    src="{{ item.url }}"
+                    class="h-48 w-full object-cover">
+
+            {% endif %}
+
+            <div class="space-y-4 p-5 flex items-center">
+
+                <h2
+                    class="truncate text-sm">
+
+                    {{ item.name }}
+
+                </h2>
+
+                {% if item.type == "video" %}
+                    <img
+                        src="/static/icons/images.svg"
+                        class="h-10 w-10 opacity-90">
+
+                {% else %}
+
+                    <img
+                        src="/static/icons/gallery.svg"
+                        class="h-10 w-10 opacity-90">
+
+                {% endif %}
+
+                
+                <form action="/gallery/delete" method="post">
+            
+                    <input type="hidden" name="filename" value="{{ item.name }}">
+                
+                    <button class="mt-4 w-full rounded-xl bg-red-500 py-3 transition hover:bg-red-600">
+                
+                        Delete
+                
+                    </button>
+            
+                </form>
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div
+    class="mt-32 text-center">
+
+    <img
+        src="/static/icons/gallery.svg"
+        class="mx-auto h-20 opacity-30">
+
+    <p
+        class="mt-8 text-xl text-zinc-400">
+
+        No memories yet
+
+    </p>
+
+    <a
+        href="/upload"
+        class="mt-10 inline-block rounded-full bg-white px-8 py-4 text-black">
+
+        Upload Memories
+
+    </a>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

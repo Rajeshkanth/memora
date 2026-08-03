@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 
 from fastapi import UploadFile
+from utils import is_image, is_video
 
 
 class MediaService:
@@ -25,3 +26,34 @@ class MediaService:
             count += 1
 
         return count
+
+    @staticmethod
+    def list():
+
+        media = []
+
+        for file in sorted(MediaService.MEDIA_DIR.iterdir()):
+
+            if not (is_image(file) or is_video(file)):
+                continue
+
+            media.append(
+                {
+                    "name": file.name,
+                    "url": f"/media/{file.name}",
+                    "thumbnail": f"/media/{file.name}",  # later videos will use generated thumbnails
+                    "type": "image" if is_image(file) else "video",
+                    "is_video": is_video(file),
+                }
+            )
+
+        return media
+
+    @staticmethod
+    def delete(filename):
+
+        file = MediaService.MEDIA_DIR / filename
+
+        if file.exists():
+
+            file.unlink()
