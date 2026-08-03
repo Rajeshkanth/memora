@@ -76,8 +76,7 @@ class WifiManager:
     def connect(ssid: str, password: str):
 
         result = subprocess.run(
-            [
-                "nmcli",
+            WifiManager.NMCLI + [
                 "device",
                 "wifi",
                 "connect",
