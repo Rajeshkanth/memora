@@ -1,47 +1,151 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <title>{{ title }}</title>
+<!-- {% with
+title="UPLOAD MEMORIES"
+%}
+{% include "components/header.html" %}
+{% endwith %} -->
 
-    <link rel="stylesheet" href="/static/css/style.css">
+<header class="mb-10 flex text-center items-baseline">
 
-</head>
+    <a
+        href="/"
+        class="mb-6 inline-flex text-zinc-400 hover:text-white">
 
-<body>
+        ← Back
 
-<div class="container">
+    </a>
 
-    <h1>Upload Media</h1>
+    <h1
+        class="text-center text-2xl font-light tracking-[0.35rem] uppercase ml-8">
 
-    <form
-        action="/upload"
-        method="post"
-        enctype="multipart/form-data">
+        Memories
 
-        <input
-            type="file"
-            name="files"
-            multiple
-            accept="image/*,video/*">
+    </h1>
 
-        <br><br>
+</header>
 
-        <button type="submit">
+<form
+    id="uploadForm"
+    action="/upload"
+    method="post"
+    enctype="multipart/form-data"
+    >
 
-            Upload
+    <input
+        id="files"
+        type="file"
+        name="files"
+        multiple
+        accept="image/*,video/*"
+        class="hidden">
 
-        </button>
+    <label
+        for="files"
+        class="flex cursor-pointer flex-col items-center rounded-3xl border border-dashed border-zinc-700 bg-zinc-950 px-8 py-16 transition hover:border-zinc-500">
 
-    </form>
+        <img
+            src="/static/icons/upload.svg"
+            class="mb-8 h-16 w-16 opacity-80">
 
-    <br>
+        <p class="text-2xl text-center">
 
-    <a href="/">← Back</a>
+            Drag & Drop your memories here
+
+        </p>
+
+        <p class="my-5 text-zinc-500">
+
+            or
+
+        </p>
+
+        <div
+            class="rounded-full bg-white px-8 py-4 text-lg font-medium text-black">
+
+            Tap to Upload
+
+        </div>
+
+        <p
+            class="mt-8 text-center text-sm leading-7 text-zinc-500">
+
+            Supports Images & Videos
+
+            <br>
+
+            JPG, PNG, WEBP, MP4, MOV
+
+        </p>
+
+    </label>
+
+</form>
+
+<div
+    id="uploadProgress"
+    class="mt-8 hidden rounded-3xl bg-zinc-900 p-5">
+
+    <div class="flex items-center gap-4">
+
+        <div
+            class="h-16 w-16 rounded-xl bg-zinc-800"></div>
+
+        <div class="flex-1">
+
+            <div
+                id="fileName"
+                class="text-lg">
+
+            </div>
+
+            <div
+                id="fileSize"
+                class="mt-1 text-sm text-zinc-500">
+
+            </div>
+
+            <div
+                class="mt-4 h-2 overflow-hidden rounded-full bg-zinc-800">
+
+                <div
+                    id="progressBar"
+                    class="h-full w-0 rounded-full bg-white">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="progressText"
+            class="text-sm">
+
+            0%
+
+        </div>
+
+    </div>
 
 </div>
 
-</body>
+<script>
 
-</html>
+const input = document.getElementById("files");
+const form = document.getElementById("uploadForm");
+
+input.addEventListener("change", () => {
+
+    if (!input.files.length)
+        return;
+
+    form.submit();
+
+});
+
+</script>
+
+{% endblock %}

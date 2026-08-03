@@ -1,0 +1,52 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="140"
+    height="140"
+    viewBox="0 0 140 140"
+    fill="none">
+
+    <!-- Back Photo -->
+    <g transform="translate(22 20) rotate(-8 40 32)">
+        <rect
+            x="0"
+            y="0"
+            width="78"
+            height="58"
+            rx="6"
+            stroke="#6E6E73"
+            stroke-width="3"/>
+    </g>
+
+    <!-- Front Photo -->
+    <g transform="translate(34 34)">
+        <rect
+            x="0"
+            y="0"
+            width="78"
+            height="58"
+            rx="6"
+            fill="#0000"
+            stroke="#8E8E93"
+            stroke-width="3"/>
+
+        <!-- Sun -->
+        <circle
+            cx="18"
+            cy="18"
+            r="4"
+            fill="#8E8E93"/>
+
+        <!-- Mountains -->
+        <path
+            d="M10 46
+               L28 28
+               L42 39
+               L56 24
+               L68 46"
+            stroke="#8E8E93"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"/>
+    </g>
+
+</svg>

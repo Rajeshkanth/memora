@@ -1,49 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
+{% block content %}
 
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
+{% with
+title="MEMORA",
+subtitle="Your Living Memories"
+%}
+{% include "components/header.html" %}
+{% endwith %}
 
-    <link rel="stylesheet" href="/static/css/style.css">
+<div class="space-y-5">
 
-</head>
+{% with
+href="/gallery",
+icon="/static/icons/gallery.svg",
+title="Memories",
+description="View your memories"
+%}
+{% include "components/menu_card.html" %}
+{% endwith %}
 
-<body>
+{% with
+href="/upload",
+icon="/static/icons/upload.svg",
+title="Upload Memories",
+description="Add new memories"
+%}
+{% include "components/menu_card.html" %}
+{% endwith %}
 
-<div class="container">
+{% with
+href="/settings",
+icon="/static/icons/settings.svg",
+title="Settings",
+description="Customize your frame"
+%}
+{% include "components/menu_card.html" %}
+{% endwith %}
 
-    <h1>MEMORA</h1>
-
-    <p>Your Living Memory Frame</p>
-
-    <div class="menu">
-
-        <a href="/gallery" class="card">
-            🖼
-            <span>Gallery</span>
-        </a>
-
-        <a href="/upload" class="card">
-            ⬆
-            <span>Upload Media</span>
-        </a>
-
-        <a href="/settings" class="card">
-            ⚙
-            <span>Settings</span>
-        </a>
-
-        <a href="/wifi" class="card">
-            📶
-            <span>Wi-Fi</span>
-        </a>
-
-    </div>
+{% with
+href="/wifi",
+icon="/static/icons/wifi.svg",
+title="Wi-Fi",
+description="Connect to a network"
+%}
+{% include "components/menu_card.html" %}
+{% endwith %}
 
 </div>
 
-</body>
-
-</html>
+{% endblock %}
