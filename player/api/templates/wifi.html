@@ -28,14 +28,54 @@
 
 </p>
 
+{% set connected_network = networks | selectattr("connected") | first %}
+
 {% if networks %}
+
+{% if connected_network %}
+
+<div class="mb-8">
+
+    <p class="mb-3 text-sm uppercase tracking-widest text-zinc-500">
+
+        Connected
+
+    </p>
+
+    <div class="flex items-center gap-4 rounded-3xl bg-zinc-900 p-6">
+
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-green-500"></span>
+
+        <img
+            src="/static/icons/wifi.svg"
+            class="h-6 w-6 opacity-80">
+
+        <h2 class="text-lg font-light">
+
+            {{ connected_network.ssid }}
+
+        </h2>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<p class="mb-3 text-sm uppercase tracking-widest text-zinc-500">
+
+    Available Networks
+
+</p>
 
 <div class="space-y-4">
 
-    {% for network in networks %}
+    {% for network in networks if not network.connected %}
 
     <button
-        class="flex w-full items-center justify-between rounded-3xl bg-zinc-900 p-6 transition hover:bg-zinc-800">
+        type="button"
+        class="network-item flex w-full items-center justify-between rounded-3xl bg-zinc-900 p-6 text-left transition hover:bg-zinc-800"
+        data-ssid="{{ network.ssid }}">
 
         <div class="flex items-center gap-4">
 
@@ -96,5 +136,144 @@
 </div>
 
 {% endif %}
+
+<div
+    id="passwordModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 p-6">
+
+    <div class="w-full max-w-sm rounded-3xl bg-zinc-900 p-8">
+
+        <h2 class="mb-1 text-center text-xl font-light">
+
+            Connect to
+
+        </h2>
+
+        <p
+            id="modalSsid"
+            class="mb-8 text-center text-2xl"></p>
+
+        <input
+            id="passwordInput"
+            type="password"
+            placeholder="Password"
+            class="mb-8 w-full rounded-2xl bg-zinc-800 px-5 py-4 text-center text-lg text-white outline-none focus:ring-2 focus:ring-white/30">
+
+        <div class="flex gap-4">
+
+            <button
+                type="button"
+                id="cancelConnect"
+                class="flex-1 rounded-full bg-zinc-800 py-4 transition hover:bg-zinc-700">
+
+                Cancel
+
+            </button>
+
+            <button
+                type="button"
+                id="confirmConnect"
+                class="flex-1 rounded-full bg-white py-4 font-medium text-black transition hover:bg-zinc-200">
+
+                Connect
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div
+    id="connectingScreen"
+    class="fixed inset-0 z-50 hidden flex-col items-center justify-center bg-black p-6 text-center">
+
+    <div class="mb-8 h-12 w-12 animate-spin rounded-full border-2 border-zinc-700 border-t-white"></div>
+
+    <h2 class="mb-2 text-2xl font-light">
+
+        Connecting...
+
+    </h2>
+
+    <p class="mb-10 text-zinc-400">
+
+        MEMORA is joining <span id="connectingSsid" class="text-white"></span>
+
+    </p>
+
+    <p class="text-sm text-zinc-500">
+
+        This may take 20–30 seconds.
+
+    </p>
+
+    <p class="mt-10 max-w-xs text-sm leading-6 text-zinc-500">
+
+        Your device may disconnect.<br>
+        Reconnect your phone to <span id="connectingSsid2" class="text-zinc-300"></span>,<br>
+        then open <span class="text-zinc-300">memora.local</span>.
+
+    </p>
+
+</div>
+
+<script>
+
+const passwordModal = document.getElementById("passwordModal");
+const connectingScreen = document.getElementById("connectingScreen");
+const modalSsid = document.getElementById("modalSsid");
+const passwordInput = document.getElementById("passwordInput");
+const connectingSsid = document.getElementById("connectingSsid");
+const connectingSsid2 = document.getElementById("connectingSsid2");
+const cancelConnect = document.getElementById("cancelConnect");
+const confirmConnect = document.getElementById("confirmConnect");
+
+let selectedSsid = null;
+
+document.querySelectorAll(".network-item").forEach((button) => {
+    button.addEventListener("click", () => openModal(button.dataset.ssid));
+});
+
+function openModal(ssid) {
+    selectedSsid = ssid;
+    modalSsid.textContent = ssid;
+    passwordInput.value = "";
+
+    passwordModal.classList.remove("hidden");
+    passwordModal.classList.add("flex");
+
+    passwordInput.focus();
+}
+
+function closeModal() {
+    passwordModal.classList.add("hidden");
+    passwordModal.classList.remove("flex");
+}
+
+cancelConnect.addEventListener("click", closeModal);
+
+confirmConnect.addEventListener("click", () => {
+    const password = passwordInput.value;
+
+    closeModal();
+
+    connectingSsid.textContent = selectedSsid;
+    connectingSsid2.textContent = selectedSsid;
+
+    connectingScreen.classList.remove("hidden");
+    connectingScreen.classList.add("flex");
+
+    // The Pi may switch networks mid-request and drop this connection.
+    // That is expected, so the response is never awaited.
+    fetch("/wifi/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ssid: selectedSsid, password: password }),
+    }).catch(() => {});
+});
+
+</script>
 
 {% endblock %}

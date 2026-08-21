@@ -11,9 +11,9 @@ class WifiManager:
 
         if platform.system() == "Windows":
             return [
-                {"ssid": "Home WiFi"},
-                {"ssid": "Office WiFi"},
-                {"ssid": "MEMORA Test"},
+                {"ssid": "Home WiFi", "signal": 78, "security": "WPA2", "connected": True},
+                {"ssid": "Office WiFi", "signal": 55, "security": "WPA2", "connected": False},
+                {"ssid": "MEMORA Test", "signal": 40, "security": "", "connected": False},
             ]
 
         result = subprocess.run(

@@ -13,6 +13,7 @@
   ],
   "loop": false,
   "shuffle": false,
+  "displayMode": "mixed",
   "idleScreen": true,
   "idleMessage": "All memories played."
 }
