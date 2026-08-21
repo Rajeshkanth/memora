@@ -10,7 +10,7 @@ class VideoEngine:
     def initialize(self):
         pass
 
-    def play(self, video_path):
+    def play(self, video_path, loop=False):
         self.stop()
 
         print("Launching: ", video_path)
@@ -19,40 +19,13 @@ class VideoEngine:
 
         print(video)
 
-        self.process = subprocess.Popen(
-            [
-                "mpv",
-                "--fullscreen",
-                "--vo=gpu",
-                "--no-terminal",
-                video_path,
-            ],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
-            stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
-            preexec_fn=os.setpgrp,       # Detaches the process cleanly on Linux/Pi
-            cwd=os.getcwd(),
-        )
-
-    def play_with_poster(self, poster_path, video_path, hold_duration, loop=False):
-        self.stop()
-
-        poster = str(Path(poster_path).resolve())
-        video = str(Path(video_path).resolve())
-
-        print(f"Launching (hold {hold_duration}s then play{' looped' if loop else ''}): ", video)
-
         args = [
             "mpv",
             "--fullscreen",
             "--vo=gpu",
             "--no-terminal",
-            f"--image-display-duration={hold_duration}",
-            poster,
         ]
 
-        # Placed after the poster so it only applies to the video entry -
-        # the poster must still advance after hold_duration, not loop forever.
         if loop:
             args.append("--loop-file=inf")
 
@@ -60,6 +33,31 @@ class VideoEngine:
 
         self.process = subprocess.Popen(
             args,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
+            stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
+            preexec_fn=os.setpgrp,       # Detaches the process cleanly on Linux/Pi
+            cwd=os.getcwd(),
+        )
+
+    def play_with_poster(self, poster_path, video_path, hold_duration):
+        self.stop()
+
+        poster = str(Path(poster_path).resolve())
+        video = str(Path(video_path).resolve())
+
+        print(f"Launching (hold {hold_duration}s then play): ", video)
+
+        self.process = subprocess.Popen(
+            [
+                "mpv",
+                "--fullscreen",
+                "--vo=gpu",
+                "--no-terminal",
+                f"--image-display-duration={hold_duration}",
+                poster,
+                video,
+            ],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
             stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
