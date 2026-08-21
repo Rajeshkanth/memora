@@ -3,7 +3,7 @@ import time
 
 from engines.image_engine import ImageEngine
 from engines.video_engine import VideoEngine
-from utils import is_image, is_video
+from utils import is_image, is_video, generate_poster
 from managers.media_manager import MediaManager
 
 
@@ -19,8 +19,11 @@ class SlideshowManager:
         self.video_engine.initialize()
 
         self.interval = 5
+        self.video_hold_duration = 4
         self.running = False
         self.last_switch = 0
+        self.video_started = False
+        self.hold_start = 0
 
     def show_current(self):
 
@@ -37,11 +40,17 @@ class SlideshowManager:
             self.image_engine.show(str(media))
 
         elif is_video(media):
-            print(f"Video : {media.name}")
-            self.image_engine.clear()
-            self.image_engine.shutdown()
-            time.sleep(0.1)
-            self.video_engine.play(str(media))
+            print(f"Video (holding) : {media.name}")
+
+            poster = generate_poster(media)
+
+            if not self.image_engine.initialized:
+                self.image_engine.initialize()
+
+            self.image_engine.show(str(poster))
+
+            self.video_started = False
+            self.hold_start = time.monotonic()
 
     def start(self, interval=5):
 
@@ -89,7 +98,19 @@ class SlideshowManager:
 
         elif is_video(media):
 
-            if self.video_engine.has_finished():
+            if not self.video_started:
+
+                if now - self.hold_start >= self.video_hold_duration:
+                    print(f"Video (playing) : {media.name}")
+
+                    self.image_engine.clear()
+                    self.image_engine.shutdown()
+                    time.sleep(0.1)
+
+                    self.video_engine.play(str(media))
+                    self.video_started = True
+
+            elif self.video_engine.has_finished():
                 self.media_manager.next()
                 self.show_current()
                 self.last_switch = now

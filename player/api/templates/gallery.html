@@ -48,41 +48,46 @@
 
             {% endif %}
 
-            <div class="space-y-4 p-5 flex items-center">
+            <div class="flex items-center justify-between px-5 py-4">
 
-                <h2
-                    class="truncate text-sm">
-
-                    {{ item.name }}
-
-                </h2>
+            <div class="flex items-center gap-3 min-w-0">
 
                 {% if item.type == "video" %}
                     <img
-                        src="/static/icons/images.svg"
-                        class="h-10 w-10 opacity-90">
-
+                        src="/static/icons/video.svg"
+                        class="h-5 w-5 shrink-0 opacity-70">
                 {% else %}
-
                     <img
                         src="/static/icons/gallery.svg"
-                        class="h-10 w-10 opacity-90">
-
+                        class="h-5 w-5 shrink-0 opacity-70">
                 {% endif %}
 
-                
-                <form action="/gallery/delete" method="post">
-            
-                    <input type="hidden" name="filename" value="{{ item.name }}">
-                
-                    <button class="mt-4 w-full rounded-xl bg-red-500 py-3 transition hover:bg-red-600">
-                
-                        Delete
-                
-                    </button>
-            
-                </form>
+                <h2 class="truncate text-sm font-light">
+                    {{ item.name }}
+                </h2>
+
             </div>
+
+            <form action="/gallery/delete" method="post" class="shrink-0">
+
+                <input
+                    type="hidden"
+                    name="filename"
+                    value="{{ item.name }}">
+
+                <button
+                    type="submit"
+                    class="rounded-full p-2 transition hover:bg-zinc-800">
+
+                    <img
+                        src="/static/icons/trash-bin.svg"
+                        class="h-5 w-5 opacity-60 hover:opacity-100">
+
+                </button>
+
+            </form>
+
+        </div>
 
         </div>
 

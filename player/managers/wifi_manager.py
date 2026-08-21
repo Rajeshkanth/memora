@@ -1,4 +1,5 @@
 import subprocess
+import platform
 
 
 class WifiManager:
@@ -7,6 +8,13 @@ class WifiManager:
 
     @staticmethod
     def scan():
+
+        if platform.system() == "Windows":
+            return [
+                {"ssid": "Home WiFi"},
+                {"ssid": "Office WiFi"},
+                {"ssid": "MEMORA Test"},
+            ]
 
         result = subprocess.run(
             WifiManager.NMCLI +
