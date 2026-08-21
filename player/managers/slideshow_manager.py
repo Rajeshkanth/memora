@@ -84,6 +84,18 @@ class SlideshowManager:
             print("Refreshing playlist")
             self.media_manager.refresh()
 
+            current = self.media_manager.current
+
+            if current is None:
+                return
+
+            if current != media:
+                self.show_current()
+                self.last_switch = time.monotonic()
+                return
+
+            media = current
+
         now = time.monotonic()
 
         if is_image(media):

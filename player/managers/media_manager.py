@@ -48,6 +48,8 @@ class MediaManager:
         mode = Config().get_display_mode()
         library = Library()
 
+        previous = self.current
+
         self.media = sorted(
             file
             for file in self.media_dir.iterdir()
@@ -56,6 +58,8 @@ class MediaManager:
 
         if not self.media:
             self.current_index = 0
+        elif previous in self.media:
+            self.current_index = self.media.index(previous)
         elif self.current_index >= len(self.media):
             self.current_index = 0
 
