@@ -40,18 +40,23 @@ class SlideshowManager:
         elif is_video(media):
             print(f"Video : {media.name}")
 
-            self.looping_single = False
-
             poster = generate_poster(media)
 
             self.image_engine.clear()
             self.image_engine.shutdown()
             time.sleep(0.1)
 
+            # If this video is the only thing in rotation, have mpv loop
+            # the whole poster+video playlist internally - keeps the
+            # still-then-animate rhythm on every repeat, with a single
+            # continuous process (no restart, no repeated flash).
+            self.looping_single = len(self.media_manager.media) == 1
+
             self.video_engine.play_with_poster(
                 poster,
                 media,
                 self.video_hold_duration,
+                loop_playlist=self.looping_single,
             )
 
     def start(self, interval=5):
@@ -112,8 +117,8 @@ class SlideshowManager:
 
         elif is_video(media):
 
-            # Already settled into looping this lone video internally via
-            # mpv - nothing to do unless more media has since shown up.
+            # mpv is looping the poster+video playlist internally -
+            # nothing to do unless more media has since shown up.
             if self.looping_single:
                 if len(self.media_manager.media) > 1:
                     self.show_current()
@@ -121,19 +126,8 @@ class SlideshowManager:
                 return
 
             if self.video_engine.has_finished():
-
-                # The first real playthrough (poster hold + play) just
-                # ended. If it's the only thing in rotation, settle into
-                # an internal mpv loop instead of restarting the whole
-                # poster-hold ritual every repeat - one clean transition
-                # instead of a flash on every loop.
-                if len(self.media_manager.media) == 1:
-                    self.video_engine.play(media, loop=True)
-                    self.looping_single = True
-                else:
-                    self.media_manager.next()
-                    self.show_current()
-
+                self.media_manager.next()
+                self.show_current()
                 self.last_switch = now
 
     def shutdown(self):

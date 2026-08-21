@@ -10,7 +10,7 @@ class VideoEngine:
     def initialize(self):
         pass
 
-    def play(self, video_path, loop=False):
+    def play(self, video_path):
         self.stop()
 
         print("Launching: ", video_path)
@@ -19,20 +19,14 @@ class VideoEngine:
 
         print(video)
 
-        args = [
-            "mpv",
-            "--fullscreen",
-            "--vo=gpu",
-            "--no-terminal",
-        ]
-
-        if loop:
-            args.append("--loop-file=inf")
-
-        args.append(video)
-
         self.process = subprocess.Popen(
-            args,
+            [
+                "mpv",
+                "--fullscreen",
+                "--vo=gpu",
+                "--no-terminal",
+                video_path,
+            ],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
             stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
@@ -40,24 +34,33 @@ class VideoEngine:
             cwd=os.getcwd(),
         )
 
-    def play_with_poster(self, poster_path, video_path, hold_duration):
+    def play_with_poster(self, poster_path, video_path, hold_duration, loop_playlist=False):
         self.stop()
 
         poster = str(Path(poster_path).resolve())
         video = str(Path(video_path).resolve())
 
-        print(f"Launching (hold {hold_duration}s then play): ", video)
+        print(f"Launching (hold {hold_duration}s then play{' - repeating' if loop_playlist else ''}): ", video)
+
+        args = [
+            "mpv",
+            "--fullscreen",
+            "--vo=gpu",
+            "--no-terminal",
+            f"--image-display-duration={hold_duration}",
+        ]
+
+        # Loops the whole playlist (poster hold, then video, then back to
+        # the poster hold) inside one continuous process - preserves the
+        # still-then-animate rhythm on every repeat, with no process
+        # restart and therefore no display handoff / flash between cycles.
+        if loop_playlist:
+            args.append("--loop-playlist=inf")
+
+        args += [poster, video]
 
         self.process = subprocess.Popen(
-            [
-                "mpv",
-                "--fullscreen",
-                "--vo=gpu",
-                "--no-terminal",
-                f"--image-display-duration={hold_duration}",
-                poster,
-                video,
-            ],
+            args,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
             stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
