@@ -1,4 +1,3 @@
-from pathlib import Path
 import time
 
 from engines.image_engine import ImageEngine
@@ -22,8 +21,6 @@ class SlideshowManager:
         self.video_hold_duration = 4
         self.running = False
         self.last_switch = 0
-        self.video_started = False
-        self.hold_start = 0
 
     def show_current(self):
 
@@ -40,17 +37,19 @@ class SlideshowManager:
             self.image_engine.show(str(media))
 
         elif is_video(media):
-            print(f"Video (holding) : {media.name}")
+            print(f"Video : {media.name}")
 
             poster = generate_poster(media)
 
-            if not self.image_engine.initialized:
-                self.image_engine.initialize()
+            self.image_engine.clear()
+            self.image_engine.shutdown()
+            time.sleep(0.1)
 
-            self.image_engine.show(str(poster))
-
-            self.video_started = False
-            self.hold_start = time.monotonic()
+            self.video_engine.play_with_poster(
+                poster,
+                media,
+                self.video_hold_duration,
+            )
 
     def start(self, interval=5):
 
@@ -98,19 +97,7 @@ class SlideshowManager:
 
         elif is_video(media):
 
-            if not self.video_started:
-
-                if now - self.hold_start >= self.video_hold_duration:
-                    print(f"Video (playing) : {media.name}")
-
-                    self.image_engine.clear()
-                    self.image_engine.shutdown()
-                    time.sleep(0.1)
-
-                    self.video_engine.play(str(media))
-                    self.video_started = True
-
-            elif self.video_engine.has_finished():
+            if self.video_engine.has_finished():
                 self.media_manager.next()
                 self.show_current()
                 self.last_switch = now

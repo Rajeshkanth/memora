@@ -34,6 +34,31 @@ class VideoEngine:
             cwd=os.getcwd(),
         )
 
+    def play_with_poster(self, poster_path, video_path, hold_duration):
+        self.stop()
+
+        poster = str(Path(poster_path).resolve())
+        video = str(Path(video_path).resolve())
+
+        print(f"Launching (hold {hold_duration}s then play): ", video)
+
+        self.process = subprocess.Popen(
+            [
+                "mpv",
+                "--fullscreen",
+                "--vo=gpu",
+                "--no-terminal",
+                f"--image-display-duration={hold_duration}",
+                poster,
+                video,
+            ],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,   # Redirects standard output away from terminal
+            stderr=subprocess.DEVNULL,   # Redirects error output away from terminal
+            preexec_fn=os.setpgrp,       # Detaches the process cleanly on Linux/Pi
+            cwd=os.getcwd(),
+        )
+
     def stop(self):
         if self.process and self.process.poll() is None:
             self.process.terminate()
