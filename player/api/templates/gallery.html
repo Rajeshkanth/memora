@@ -68,24 +68,42 @@
 
             </div>
 
-            <form action="/gallery/delete" method="post" class="shrink-0">
+            <div class="flex shrink-0 items-center gap-2">
 
-                <input
-                    type="hidden"
-                    name="filename"
-                    value="{{ item.name }}">
+                <label class="relative inline-flex shrink-0 cursor-pointer items-center">
 
-                <button
-                    type="submit"
-                    class="rounded-full p-2 transition hover:bg-zinc-800">
+                    <input
+                        type="checkbox"
+                        class="toggle-item peer sr-only"
+                        data-filename="{{ item.name }}"
+                        {% if item.enabled %}checked{% endif %}>
 
-                    <img
-                        src="/static/icons/trash-bin.svg"
-                        class="h-5 w-5 opacity-60 hover:opacity-100">
+                    <div class="h-6 w-11 rounded-full bg-zinc-700 transition peer-checked:bg-white"></div>
 
-                </button>
+                    <div class="absolute left-1 h-4 w-4 rounded-full bg-black/60 transition peer-checked:translate-x-5 peer-checked:bg-black"></div>
 
-            </form>
+                </label>
+
+                <form action="/gallery/delete" method="post">
+
+                    <input
+                        type="hidden"
+                        name="filename"
+                        value="{{ item.name }}">
+
+                    <button
+                        type="submit"
+                        class="rounded-full p-2 transition hover:bg-zinc-800">
+
+                        <img
+                            src="/static/icons/trash-bin.svg"
+                            class="h-5 w-5 opacity-60 hover:opacity-100">
+
+                    </button>
+
+                </form>
+
+            </div>
 
         </div>
 
@@ -122,5 +140,28 @@
 </div>
 
 {% endif %}
+
+<script>
+
+document.querySelectorAll(".toggle-item").forEach((checkbox) => {
+
+    checkbox.addEventListener("change", () => {
+
+        fetch("/gallery/toggle", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                filename: checkbox.dataset.filename,
+                enabled: checkbox.checked,
+            }),
+        }).catch(() => {
+            checkbox.checked = !checkbox.checked;
+        });
+
+    });
+
+});
+
+</script>
 
 {% endblock %}

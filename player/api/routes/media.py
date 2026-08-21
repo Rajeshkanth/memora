@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from api.services.media import MediaService
+from api.models.media import MediaToggleRequest
 
 router = APIRouter()
 
@@ -51,3 +52,10 @@ async def delete(filename: str = Form(...)):
         "/gallery",
         status_code=303,
     )
+
+@router.post("/gallery/toggle")
+async def toggle(request: MediaToggleRequest):
+
+    MediaService.toggle(request.filename, request.enabled)
+
+    return {"success": True}

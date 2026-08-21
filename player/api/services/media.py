@@ -3,6 +3,7 @@ import shutil
 
 from fastapi import UploadFile
 from utils import is_image, is_video
+from library import Library
 
 
 class MediaService:
@@ -30,6 +31,7 @@ class MediaService:
     @staticmethod
     def list():
 
+        library = Library()
         media = []
 
         for file in sorted(MediaService.MEDIA_DIR.iterdir()):
@@ -44,6 +46,7 @@ class MediaService:
                     "thumbnail": f"/media/{file.name}",  # later videos will use generated thumbnails
                     "type": "image" if is_image(file) else "video",
                     "is_video": is_video(file),
+                    "enabled": library.is_enabled(file.name),
                 }
             )
 
@@ -57,3 +60,10 @@ class MediaService:
         if file.exists():
 
             file.unlink()
+
+        Library().remove(filename)
+
+    @staticmethod
+    def toggle(filename, enabled):
+
+        Library().set_enabled(filename, enabled)

@@ -3,6 +3,8 @@ from watchdog.observers import Observer
 from managers.media_watcher import MediaWatcher
 
 from utils import is_image, is_video
+from config import Config
+from library import Library
 
 
 class MediaManager:
@@ -10,6 +12,7 @@ class MediaManager:
     def __init__(self, media_dir):
 
         self.media_dir = Path(media_dir)
+        self.config_dir = Path("config")
 
         self.media = []
 
@@ -27,6 +30,14 @@ class MediaManager:
             recursive=False
         )
 
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+
+        self.observer.schedule(
+            handler,
+            str(self.config_dir),
+            recursive=False
+        )
+
         self.observer.start()
 
         self.refresh_required = False
@@ -34,10 +45,13 @@ class MediaManager:
 
     def refresh(self):
 
+        mode = Config().get_display_mode()
+        library = Library()
+
         self.media = sorted(
             file
             for file in self.media_dir.iterdir()
-            if is_image(file) or is_video(file)
+            if self._is_active(file, mode, library)
         )
 
         if not self.media:
@@ -46,6 +60,20 @@ class MediaManager:
             self.current_index = 0
 
         self.refresh_required = False
+
+    @staticmethod
+    def _is_active(file, mode, library):
+
+        if mode == "images" and not is_image(file):
+            return False
+
+        if mode == "videos" and not is_video(file):
+            return False
+
+        if not (is_image(file) or is_video(file)):
+            return False
+
+        return library.is_enabled(file.name)
 
 
     @property
