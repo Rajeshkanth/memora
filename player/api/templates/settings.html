@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="mb-10">
+
+    <a
+        href="/"
+        class="text-zinc-400 transition hover:text-white">
+
+        ← Back
+
+    </a>
+
+</div>
+
+<h1
+    class="mb-2 text-center text-4xl font-light tracking-[0.4rem]">
+
+    SETTINGS
+
+</h1>
+
+<p
+    class="mb-12 text-center text-zinc-500">
+
+    Customize your frame.
+
+</p>
+
+<p class="mb-3 text-sm uppercase tracking-widest text-zinc-500">
+
+    Display Mode
+
+</p>
+
+<form
+    id="displayModeForm"
+    action="/settings/display-mode"
+    method="post"
+    class="space-y-4">
+
+    {% set modes = [
+        ("images", "/static/icons/images.svg", "Photos Only", "Show only your photos"),
+        ("videos", "/static/icons/video.svg", "Videos Only", "Show your videos as living memories"),
+        ("mixed", "/static/icons/gallery.svg", "Mixed", "Photos and videos together"),
+    ] %}
+
+    {% for value, icon, title, description in modes %}
+
+    <label
+        class="flex cursor-pointer items-center gap-4 rounded-3xl bg-zinc-900 p-6 transition hover:bg-zinc-800 has-[:checked]:bg-zinc-800 has-[:checked]:ring-2 has-[:checked]:ring-white/50">
+
+        <input
+            type="radio"
+            name="mode"
+            value="{{ value }}"
+            class="sr-only"
+            {% if display_mode == value %}checked{% endif %}>
+
+        <img
+            src="{{ icon }}"
+            class="h-8 w-8 shrink-0 opacity-80">
+
+        <div class="flex-1">
+
+            <h2 class="text-lg font-light">
+
+                {{ title }}
+
+            </h2>
+
+            <p class="text-sm text-zinc-500">
+
+                {{ description }}
+
+            </p>
+
+        </div>
+
+    </label>
+
+    {% endfor %}
+
+</form>
+
+<script>
+
+document.querySelectorAll('#displayModeForm input[type="radio"]').forEach((radio) => {
+
+    radio.addEventListener("change", () => {
+        document.getElementById("displayModeForm").submit();
+    });
+
+});
+
+</script>
+
+{% endblock %}
