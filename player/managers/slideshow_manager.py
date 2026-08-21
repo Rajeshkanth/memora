@@ -21,6 +21,7 @@ class SlideshowManager:
         self.video_hold_duration = 4
         self.running = False
         self.last_switch = 0
+        self.looping_single = False
 
     def show_current(self):
 
@@ -45,10 +46,16 @@ class SlideshowManager:
             self.image_engine.shutdown()
             time.sleep(0.1)
 
+            # If this video is the only thing in rotation, let mpv loop it
+            # internally instead of restarting the process every repeat -
+            # a restart means a fresh display handoff, i.e. another flash.
+            self.looping_single = len(self.media_manager.media) == 1
+
             self.video_engine.play_with_poster(
                 poster,
                 media,
                 self.video_hold_duration,
+                loop=self.looping_single,
             )
 
     def start(self, interval=5):
@@ -108,6 +115,16 @@ class SlideshowManager:
                 self.last_switch = now
 
         elif is_video(media):
+
+            # More media showed up while looping alone - break the loop
+            # and resume normal cycling.
+            if self.looping_single and len(self.media_manager.media) > 1:
+                self.show_current()
+                self.last_switch = now
+                return
+
+            if self.looping_single:
+                return
 
             if self.video_engine.has_finished():
                 self.media_manager.next()
